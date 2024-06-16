@@ -1,0 +1,75 @@
+@startuml
+
+class Console
+
+abstract class Option #crimson {
+    #title
+    constructor(title)
+    {abstract} interact() <<abstract>>
+    showTitle(index)
+    getTitle()
+}
+
+Option *-down-> Console : {static} console
+
+abstract class Menu #crimson {
+    #title
+    #options
+    constructor(title)
+    interact()
+    {abstract} addOptions() <<abstract>>
+    interact_()
+    showTitles()
+    execChoosedOption()
+    add(option)
+    removeOptions()
+    hasOption(option)
+}
+
+
+Menu *-down-> "+" Option
+
+class Model #darkCyan {
+    #strings
+    constructor()
+    add(string)
+    remove(index)
+    get(index)
+    size()
+}
+
+abstract class ModelOption #forestGreen {
+    model
+    constructor(string, model)
+    {abstract} interact() <<abstract>>
+}
+
+ModelOption -down-> Model
+Option <|-down- ModelOption
+
+class ListModelOption #forestGreen {
+    constructor (model)
+    interact()
+}
+
+ModelOption <|-down- ListModelOption
+
+
+class X as "..."  #forestGreen {
+    constructor(model)
+    interact()
+}
+
+ModelOption <|-down- X
+
+class ModelMenu  #Lime {
+    #model
+    constructor(model)
+    addOptions()
+}
+
+Menu <|-down- ModelMenu
+ModelMenu -down-> Model
+
+
+@enduml
