@@ -1,0 +1,132 @@
+@startuml
+
+class Console
+
+abstract class Option #crimson {
+    #title
+    constructor(title)
+    {abstract} interact() <<abstract>>
+    showTitle(index)
+    getTitle()
+}
+
+class QuitOption #crimson {
+    #executed
+    constructor()
+    interact()
+    isExecuted()
+}
+
+abstract class Menu #crimson {
+    #title
+    #options
+    constructor(title)
+    interact()
+    {abstract} addOptions() <<abstract>>
+    interact_()
+    showTitles()
+    -showTitle()
+    execChoosedOption()
+    add(option)
+    removeOptions()
+    hasOption(option)
+}
+
+abstract class QuitMenu #crimson {
+    #quitOption;
+    constructor(title)
+    showTitles()
+    addquitOption()
+    isExecutedquitOption()
+}
+
+abstract class IterativeMenu #crimson {
+    constructor(title)
+    interact()
+}
+
+class Model #darkCyan {
+    #strings
+    constructor()
+    add(string)
+    remove(index)
+    get(index)
+    size()
+}
+
+abstract class ModelOption #forestGreen {
+    model
+    constructor(string, model)
+    {abstract} interact() <<abstract>>
+}
+
+
+
+class ListModelOption #forestGreen {
+    constructor (model)
+    interact()
+}
+
+class InverseListModelOption #forestGreen {
+    constructor (model)
+    interact()
+}
+
+class X as "..."  #forestGreen {
+    constructor(model)
+    interact()
+}
+
+
+class ModelMenu  #Lime {
+    #model
+    constructor(model)
+    addOptions()
+}
+
+class ModelQuitMenu  #Lime {
+    #model
+    constructor(model)
+    addOptions()
+}
+
+class ModelIterativeMenu  #Lime{
+    #model
+    constructor(model)
+    addOptions()
+}
+
+Menu *-down-> "+" Option
+Menu *-down-> Console : {static} console
+Menu <|-down- ModelMenu
+Menu <|-down- QuitMenu
+
+Option *-down-> Console : {static} console
+Option <|-down- QuitOption
+
+QuitMenu *-down-> QuitOption
+QuitMenu <|-down- ModelQuitMenu
+QuitMenu <|-down- IterativeMenu
+
+IterativeMenu <|-down- ModelIterativeMenu
+
+ModelMenu -down-> Model
+ModelMenu *-down-> X
+
+ModelQuitMenu *-down-> X
+ModelQuitMenu -down-> Model
+
+ModelIterativeMenu -down-> Model
+ModelIterativeMenu *-down-> X
+
+Option <|-down- ModelOption
+
+ModelOption -down-> Model
+ModelOption <|-down- ListModelOption
+ModelOption <|-down- InverseListModelOption
+ModelOption <|-down- X
+
+
+X -[hidden]- Model
+
+@enduml
