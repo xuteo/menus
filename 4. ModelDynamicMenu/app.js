@@ -152,6 +152,22 @@ class IterativeMenu extends QuitMenu {
 
 }
 
+class DynamicMenu extends IterativeMenu {
+
+    constructor(title) {
+        super(title);
+    }
+
+    interact() {
+        do {
+            this.removeOptions();
+            this.addOptions();
+            this.interact_();
+        } while (!this.isExecutedquitOption());
+    }
+
+}
+
 // model
 
 class Model {
@@ -239,10 +255,29 @@ class ListFirstModelOption extends ModelOption {
     }
 }
 
+class RemoveModelOption extends ModelOption {
+
+    #index;
+
+    constructor(model, index) {
+        super("Eliminar ", model);
+        this.model = model;
+        this.index = index;
+    }
+
+    getTitle() {
+        return super.getTitle() + ": " + this.model.get(this.index);
+    }
+
+    interact() {
+        this.model.remove(this.index);
+    }
+
+}
 
 // ModelMenus
 
-/* class ModelMenu extends Menu {
+class ModelMenu extends Menu {
 
     #model;
 
@@ -259,7 +294,7 @@ class ListFirstModelOption extends ModelOption {
 
 }
 
-Option.console.writeln("***");
+/* Option.console.writeln("***");
 new ModelMenu(new Model()).interact(); */
 
 // 1. Creamos ModelMenu y lo asocio con el modelo.
@@ -281,7 +316,7 @@ new ModelMenu(new Model()).interact(); */
 //      de cada opcion, y como las opciones concretas conocen al modelo ya pueden hacer operacions sobre el, en este caso de
 //      lectura para luego imprimir por pantalla.
 
-/* class ModelQuitMenu extends QuitMenu {
+class ModelQuitMenu extends QuitMenu {
 
     #model;
 
@@ -297,9 +332,9 @@ new ModelMenu(new Model()).interact(); */
 
 }
 
-Option.console.writeln("***");
-new ModelQuitMenu(new Model()).interact(); */
-
+/* Option.console.writeln("***");
+new ModelQuitMenu(new Model()).interact();
+ */
 // 1. Creamos `ModelQuitMenu` y lo asocio con el modelo.
 // 2. Se llama al conctructor del padre `QuitMenu` con el nombre del modelo.
 // 3. el constructor de `QuitMenu` crea por defecto un objeto QuitOption y pasa a su padre `Menu` el nombre de `ModelQuitMenu`
@@ -342,10 +377,38 @@ class ModelIterativeMenu extends IterativeMenu {
 
 }
 
-Option.console.writeln("***");
-new ModelIterativeMenu(new Model()).interact();
+/* Option.console.writeln("***");
+new ModelIterativeMenu(new Model()).interact(); */
 
 // al heredar de `QuitMenu` reproduce el comportamiento, pero con una diferencia. `IterativeMenu`
 // sobreescribe el metodo interact() de `Menu`. primero llama a addOptions como hacia el padre, para después
 // meter en un bucle do while a interact_() mientras que isExecutedOption sea falso.
 // De esta forma vuelve a ejecutar en cada iteración showTitles() hasta que elijamos al opcion de salir.
+
+class ModelDynamicMenu extends DynamicMenu {
+
+    #model;
+
+    constructor(model) {
+        super("Model Dynamic Menu");
+        this.model = model;
+    }
+
+    addOptions() {
+        for (let i = 0; i < this.model.size(); i++) {
+            this.add(new RemoveModelOption(this.model, i));
+        }
+    }
+
+}
+
+Option.console.writeln("***");
+new ModelDynamicMenu(new Model()).interact();
+
+// ModelDynamicMenu sobreescribe el metodo addOptions de su padre `Menu`y DynamicMenu vuelve a sobrescribir el metodo interact() de su padre. 
+// en un do while mientras no se ejecute QuitOption Liampia todas la posibles opciones previamente
+// añadidas, llama al addOptions sobrescrito en el hijo, el cual añade al padre una opcion RemoveModelOption por cada
+// entrada que haya en el modelo, despues llama al metodo interact_ del padre que muestra los titulos del padre y de 
+// las opciones y pide por pantalla seleccionar un opcion con el metodo execChoosedOption() que ejecuta el metodo
+// interact() de la opcion elegida que, en caso de ser una RemoveModelOption borra el dato en el modelo. Como QuitOpotion
+// no ha sido ejecutado vuelva a a repetir el procedimiento dentro del while.
