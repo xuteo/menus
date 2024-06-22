@@ -20,6 +20,7 @@ abstract class Menu #crimson {
     {abstract} addOptions() <<abstract>>
     interact_()
     showTitles()
+    -showTitle()
     execChoosedOption()
     add(option)
     removeOptions()
@@ -28,6 +29,7 @@ abstract class Menu #crimson {
 
 
 Menu *-down-> "+" Option
+Menu *-down-> Console : {static} console
 
 class Model #darkCyan {
     #strings
@@ -54,6 +56,13 @@ class ListModelOption #forestGreen {
 
 ModelOption <|-down- ListModelOption
 
+
+class InverseListModelOption #forestGreen {
+    constructor (model)
+    interact()
+}
+
+ModelOption <|-down- InverseListModelOption
 
 class X as "..."  #forestGreen {
     constructor(model)
